@@ -1,7 +1,16 @@
-<div class="container">
-  <h1>Lista de Clientes</h1>
+<div class="container mat-elevation-z8">
+  
+  <div class="header-controls">
+    <h1>Lista de Clientes</h1>
+    
+    <mat-form-field appearance="fill">
+      <mat-label>Buscar Cliente</mat-label>
+      <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ex. José da Silva" #input>
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+  </div>
 
-  <table mat-table [dataSource]="clientes" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource">
 
     <ng-container matColumnDef="nome">
       <th mat-header-cell *matHeaderCellDef> Nome </th>
@@ -18,12 +27,34 @@
       <td mat-cell *matCellDef="let cliente"> {{cliente.pessoa.email}} </td>
     </ng-container>
 
-    <ng-container matColumnDef="telefone">
-      <th mat-header-cell *matHeaderCellDef> Telefone </th>
-      <td mat-cell *matCellDef="let cliente"> {{cliente.pessoa.telefone}} </td>
+    <ng-container matColumnDef="classificacao">
+      <th mat-header-cell *matHeaderCellDef> Potencial (ML) </th>
+      <td mat-cell *matCellDef="let cliente">
+        <mat-chip-listbox>
+          <mat-chip [color]="getCorClassificacao(cliente.classificacao)" selected>
+            {{cliente.classificacao}}
+          </mat-chip>
+        </mat-chip-listbox>
+      </td>
     </ng-container>
+
+    <ng-container matColumnDef="acoes">
+        <th mat-header-cell *matHeaderCellDef> Ações </th>
+        <td mat-cell *matCellDef="let cliente">
+          <button mat-icon-button color="primary" (click)="classificarCliente(cliente.pessoa_id)" matTooltip="Classificar com IA">
+            <mat-icon>auto_awesome</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" (click)="atualizarSituacao(cliente.pessoa_id)" matTooltip="Atualizar Situação">
+            <mat-icon>edit_note</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="colunasExibidas"></tr>
     <tr mat-row *matRowDef="let row; columns: colunasExibidas;"></tr>
+
+    <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">Nenhum cliente encontrado para a busca "{{input.value}}"</td>
+    </tr>
   </table>
 </div>
