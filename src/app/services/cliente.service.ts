@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// Definimos a "forma" dos dados de Cliente para o TypeScript
+// A interface que define a estrutura de dados de um Cliente
 export interface Cliente {
   pessoa_id: number;
   pessoa: {
@@ -13,19 +13,52 @@ export interface Cliente {
     email: string;
     telefone: string;
   };
+  classificacao: string;
+  situacao: string;
+}
+
+// Criamos uma interface para representar a resposta paginada da API
+export interface ApiResponse {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: Cliente[];
 }
 
 @Injectable({
   providedIn: 'root'
 })
 export class ClienteService {
-  // O endereço EXATO da nossa API Django
+  // O endereço base da nossa API de clientes no Django
   private apiUrl = 'http://localhost:8000/api/clientes/';
 
   constructor(private http: HttpClient) { }
 
-  // Função que busca a lista de clientes na API
-  getClientes(): Observable<Cliente[]> {
-    return this.http.get<Cliente[]>(this.apiUrl);
+  // A função agora pode receber uma URL (para navegar entre as páginas)
+  // e retorna um Observable do tipo ApiResponse.
+  getClientes(url?: string): Observable<ApiResponse> {
+    const endpoint = url || this.apiUrl;
+    return this.http.get<ApiResponse>(endpoint);
+  }
+
+  /**
+   * Envia uma requisição para o back-end para rodar o modelo de ML
+   * em um cliente específico.
+   * Faz uma requisição POST para /api/clientes/{id}/classificar/
+   * @param id O ID do cliente a ser classificado.
+   */
+  classificarCliente(id: number): Observable<Cliente> {
+    return this.http.post<Cliente>(`${this.apiUrl}${id}/classificar/`, {});
+  }
+
+  /**
+   * Envia uma requisição para o back-end para mudar a situação
+   * de atendimento de um cliente.
+   * Faz uma requisição PATCH para /api/clientes/{id}/atualizar_situacao/
+   * @param id O ID do cliente a ser atualizado.
+   * @param novaSituacao A nova situação (ex: 'NEGOCIANDO').
+   */
+  atualizarSituacaoCliente(id: number, novaSituacao: string): Observable<Cliente> {
+    return this.http.patch<Cliente>(`${this.apiUrl}${id}/atualizar_situacao/`, { situacao: novaSituacao });
   }
 }

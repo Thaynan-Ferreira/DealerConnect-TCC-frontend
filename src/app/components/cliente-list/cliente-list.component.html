@@ -3,9 +3,9 @@
   <div class="header-controls">
     <h1>Lista de Clientes</h1>
     
-    <mat-form-field appearance="fill">
+    <mat-form-field appearance="outline">
       <mat-label>Buscar Cliente</mat-label>
-      <input matInput (keyup)="aplicarFiltro($event)" placeholder="Ex. José da Silva" #input>
+      <input matInput (keyup)="aplicarFiltro($event)" placeholder="Digite um nome, CPF ou email" #input>
       <mat-icon matSuffix>search</mat-icon>
     </mat-form-field>
   </div>
@@ -37,16 +37,38 @@
         </mat-chip-listbox>
       </td>
     </ng-container>
+    
+    <ng-container matColumnDef="situacao">
+      <th mat-header-cell *matHeaderCellDef> Situação </th>
+      <td mat-cell *matCellDef="let cliente">
+        <mat-chip-listbox>
+          <mat-chip color="warn" selected>{{cliente.situacao}}</mat-chip>
+        </mat-chip-listbox>
+      </td>
+    </ng-container>
 
     <ng-container matColumnDef="acoes">
         <th mat-header-cell *matHeaderCellDef> Ações </th>
         <td mat-cell *matCellDef="let cliente">
-          <button mat-icon-button color="primary" (click)="classificarCliente(cliente.pessoa_id)" matTooltip="Classificar com IA">
-            <mat-icon>auto_awesome</mat-icon>
-          </button>
-          <button mat-icon-button color="accent" (click)="atualizarSituacao(cliente.pessoa_id)" matTooltip="Atualizar Situação">
-            <mat-icon>edit_note</mat-icon>
-          </button>
+          
+          <mat-spinner *ngIf="carregandoAcao[cliente.pessoa_id]" diameter="24"></mat-spinner>
+
+          <div *ngIf="!carregandoAcao[cliente.pessoa_id]">
+            <button mat-icon-button color="primary" (click)="classificarCliente(cliente.pessoa_id)" matTooltip="Classificar com IA">
+              <mat-icon>auto_awesome</mat-icon>
+            </button>
+            
+            <button mat-icon-button color="accent" [matMenuTriggerFor]="menuSituacao" matTooltip="Atualizar Situação">
+              <mat-icon>edit_note</mat-icon>
+            </button>
+
+            <mat-menu #menuSituacao="matMenu">
+              <button *ngFor="let situacao of opcoesSituacao" mat-menu-item (click)="atualizarSituacao(cliente.pessoa_id, situacao)">
+                <span>Mudar para "{{situacao | titlecase}}"</span>
+              </button>
+            </mat-menu>
+          </div>
+
         </td>
       </ng-container>
 
@@ -54,7 +76,13 @@
     <tr mat-row *matRowDef="let row; columns: colunasExibidas;"></tr>
 
     <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="5">Nenhum cliente encontrado para a busca "{{input.value}}"</td>
+        <td class="mat-cell" colspan="6">Nenhum cliente encontrado para a busca "{{input.value}}"</td>
     </tr>
   </table>
+  <mat-paginator 
+    [pageSizeOptions]="[10, 25, 50]" 
+    showFirstLastButtons
+    [length]="totalDeClientes"
+    (page)="onPageChange($event)">
+  </mat-paginator>
 </div>
