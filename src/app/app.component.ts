@@ -10,10 +10,8 @@ import { ClienteListComponent } from './components/cliente-list/cliente-list.com
   standalone: true,
   imports: [
     CommonModule,
-    RouterOutlet,
-    ClienteListComponent,
     LayoutComponent
-  ],
+],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

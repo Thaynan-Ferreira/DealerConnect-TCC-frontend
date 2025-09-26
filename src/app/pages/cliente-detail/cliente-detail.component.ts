@@ -17,9 +17,9 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
   selector: 'app-cliente-detail',
   standalone: true,
   imports: [
-    CommonModule, RouterLink, MatCardModule, MatListModule,
+    CommonModule, MatCardModule, MatListModule,
     MatIconModule, MatButtonModule, MatChipsModule, MatProgressSpinnerModule
-  ],
+],
   templateUrl: './cliente-detail.component.html',
   styleUrls: ['./cliente-detail.component.css']
 })
