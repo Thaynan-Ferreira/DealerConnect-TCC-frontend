@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject, Subscription } from 'rxjs'; 
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators'; 
 import { CommonModule } from '@angular/common';
 import { ApiResponse, Cliente, ClienteService } from '../../services/cliente.service';
 import { RouterLink } from '@angular/router';
@@ -36,13 +38,19 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // 
   templateUrl: './cliente-list.component.html',
   styleUrls: ['./cliente-list.component.css']
 })
-export class ClienteListComponent implements OnInit {
+export class ClienteListComponent implements OnInit, OnDestroy {
   
   dataSource = new MatTableDataSource<Cliente>();
   colunasExibidas: string[] = ['nome', 'cpf_cnpj', 'email', 'classificacao', 'situacao', 'acoes'];
   carregandoAcao: { [key: number]: boolean } = {};
   opcoesSituacao = ['NOVO', 'NEGOCIANDO', 'VENDIDO', 'PERDIDO'];
   totalDeClientes = 0;
+
+  // Um Subject é como um "canal" onde podemos enviar os termos de busca.
+  private searchSubject = new Subject<string>();
+  private searchSubscription?: Subscription;
+  // Guarda o termo de busca atual para ser usado na paginação.
+  private termoBuscaAtual = '';
 
   constructor(
     private clienteService: ClienteService,
@@ -51,34 +59,47 @@ export class ClienteListComponent implements OnInit {
 
   ngOnInit(): void {
     this.carregarClientes();
-  }
-
-  carregarClientes(url?: string): void {
-    this.clienteService.getClientes(url).subscribe((response: ApiResponse) => {
-      this.dataSource.data = response.results;
-      this.totalDeClientes = response.count;
-      
-      this.dataSource.filterPredicate = (data: Cliente, filter: string) => {
-        const dataStr = (
-          data.pessoa.nome +
-          data.pessoa.cpf_cnpj +
-          data.pessoa.email
-        ).toLowerCase();
-        return dataStr.includes(filter);
-      };
+    // Configuramos o "debounce": esperamos 300ms após o usuário parar de digitar
+    // e só enviamos a busca se o texto for diferente do anterior.
+    this.searchSubscription = this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged()
+    ).subscribe(searchTerm => {
+      this.termoBuscaAtual = searchTerm;
+      this.carregarClientes(); // Recarrega os clientes com o novo termo de busca
     });
   }
 
-  onPageChange(event: PageEvent): void {
-    // A API do Django usa page numbers (começando em 1), enquanto o paginator do Angular usa pageIndex (começando em 0)
-    const page = event.pageIndex + 1;
-    const url = `${this.clienteService['apiUrl']}?page=${page}&page_size=${event.pageSize}`;
-    this.carregarClientes(url);
+  ngOnDestroy(): void {
+    // É uma boa prática "cancelar a inscrição" para evitar vazamentos de memória.
+    this.searchSubscription?.unsubscribe();
   }
 
+  carregarClientes(): void {
+    this.clienteService.getClientes(undefined, this.termoBuscaAtual).subscribe((response: ApiResponse) => {
+      this.dataSource.data = response.results;
+      this.totalDeClientes = response.count;
+      // NÃO PRECISO MAIS do filterPredicate aqui, pois a filtragem é no back-end.
+    });
+  }
+
+  // Agora, a paginação também envia o termo de busca atual.
+  onPageChange(event: PageEvent): void {
+    const page = event.pageIndex + 1;
+    let url = `${this.clienteService['apiUrl']}?page=${page}&page_size=${event.pageSize}`;
+    if (this.termoBuscaAtual) {
+      url += `&search=${this.termoBuscaAtual}`;
+    }
+    this.clienteService.getClientes(url).subscribe((response: ApiResponse) => {
+        this.dataSource.data = response.results;
+        this.totalDeClientes = response.count;
+    });
+  }
+
+  // Em vez de filtrar, agora ela envia o valor digitado para o nosso "canal" (Subject).
   aplicarFiltro(event: Event): void {
     const filterValue = (event.target as HTMLInputElement).value;
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+    this.searchSubject.next(filterValue.trim().toLowerCase());
   }
 
   classificarCliente(clienteId: number): void {

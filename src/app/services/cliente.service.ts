@@ -1,6 +1,6 @@
 // src/app/services/cliente.service.ts
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 // A interface que define a estrutura de dados de um Cliente
@@ -39,10 +39,19 @@ export class ClienteService {
 
   // A função agora pode receber uma URL (para navegar entre as páginas)
   // e retorna um Observable do tipo ApiResponse.
-  getClientes(url?: string): Observable<ApiResponse> {
+  getClientes(url?: string, searchTerm?: string): Observable<ApiResponse> {
     const endpoint = url || this.apiUrl;
-    return this.http.get<ApiResponse>(endpoint);
+    
+    // Se um termo de busca for fornecido, nós o adicionamos como um parâmetro na URL.
+    let params = new HttpParams();
+    if (searchTerm) {
+      params = params.append('search', searchTerm);
+    }
+
+    // A requisição agora envia os parâmetros de busca para o back-end.
+    return this.http.get<ApiResponse>(endpoint, { params });
   }
+
 
   
   /**
