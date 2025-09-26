@@ -73,7 +73,11 @@
       </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="colunasExibidas"></tr>
-    <tr mat-row *matRowDef="let row; columns: colunasExibidas;"></tr>
+    <tr mat-row 
+    *matRowDef="let row; columns: colunasExibidas;" 
+    [routerLink]="['/clientes', row.pessoa_id]"
+    class="linha-clicavel">
+</tr>
 
     <tr class="mat-row" *matNoDataRow>
         <td class="mat-cell" colspan="6">Nenhum cliente encontrado para a busca "{{input.value}}"</td>

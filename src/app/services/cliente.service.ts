@@ -41,6 +41,17 @@ export class ClienteService {
     return this.http.get<ApiResponse>(endpoint);
   }
 
+  
+  /**
+   * Busca os dados de um único cliente pelo seu ID.
+   * Faz uma requisição GET para /api/clientes/{id}/
+   * @param id O ID do cliente a ser buscado.
+   */
+  getClienteById(id: number): Observable<Cliente> {
+    return this.http.get<Cliente>(`${this.apiUrl}${id}/`);
+  }
+
+
   /**
    * Envia uma requisição para o back-end para rodar o modelo de ML
    * em um cliente específico.

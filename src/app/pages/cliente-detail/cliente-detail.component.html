@@ -1,0 +1,53 @@
+<div *ngIf="cliente$ | async as cliente; else loading">
+  
+  <div class="header">
+    <a mat-icon-button routerLink="/" matTooltip="Voltar para a lista">
+      <mat-icon>arrow_back</mat-icon>
+    </a>
+  </div>
+
+  <mat-card class="cliente-card">
+    <mat-card-header>
+      <mat-card-title>{{ cliente.pessoa.nome }}</mat-card-title>
+      <mat-card-subtitle>ID do Cliente: {{ cliente.pessoa_id }}</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <h2>Status</h2>
+      <div class="status-chips">
+        <mat-chip-listbox>
+          <mat-chip [color]="getCorClassificacao(cliente.classificacao)" selected>
+            <mat-icon>insights</mat-icon> {{ cliente.classificacao }}
+          </mat-chip>
+          <mat-chip color="warn" selected>
+            <mat-icon>support_agent</mat-icon> {{ cliente.situacao }}
+          </mat-chip>
+        </mat-chip-listbox>
+      </div>
+
+      <h2>Dados Pessoais</h2>
+      <mat-list role="list">
+        <mat-list-item role="listitem">
+          <mat-icon matListItemIcon>badge</mat-icon>
+          <div matListItemTitle>CPF/CNPJ</div>
+          <div matListItemLine>{{ cliente.pessoa.cpf_cnpj }}</div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <mat-icon matListItemIcon>email</mat-icon>
+          <div matListItemTitle>Email</div>
+          <div matListItemLine>{{ cliente.pessoa.email }}</div>
+        </mat-list-item>
+        <mat-list-item role="listitem">
+          <mat-icon matListItemIcon>call</mat-icon>
+          <div matListItemTitle>Telefone</div>
+          <div matListItemLine>{{ cliente.pessoa.telefone }}</div>
+        </mat-list-item>
+      </mat-list>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<ng-template #loading>
+  <div class="loading-spinner">
+    <mat-spinner></mat-spinner>
+  </div>
+</ng-template>

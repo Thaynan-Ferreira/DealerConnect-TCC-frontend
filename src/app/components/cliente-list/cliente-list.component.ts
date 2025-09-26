@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiResponse, Cliente, ClienteService } from '../../services/cliente.service';
+import { RouterLink } from '@angular/router';
 
 // Módulos do Angular Material que estamos usando
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -29,7 +30,8 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator'; // 
     MatTooltipModule,
     MatMenuModule,
     MatProgressSpinnerModule,
-    MatPaginatorModule // Adiciona o módulo do paginador aqui
+    MatPaginatorModule,
+    RouterLink
   ],
   templateUrl: './cliente-list.component.html',
   styleUrls: ['./cliente-list.component.css']

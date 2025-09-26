@@ -24,3 +24,11 @@ mat-form-field {
 table {
   width: 100%;
 }
+
+.linha-clicavel {
+  cursor: pointer;
+}
+
+.linha-clicavel:hover {
+  background-color: #f5f5f5;
+}
