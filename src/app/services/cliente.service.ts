@@ -29,6 +29,9 @@ export interface ApiResponse {
   providedIn: 'root'
 })
 export class ClienteService {
+  createCliente(clienteData: any): Observable<Cliente> {
+    return this.http.post<Cliente>(this.apiUrl, clienteData);
+  }
   // O endereço base da nossa API de clientes no Django
   private apiUrl = 'http://localhost:8000/api/clientes/';
 

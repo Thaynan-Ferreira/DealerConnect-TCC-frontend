@@ -32,3 +32,10 @@ table {
 .linha-clicavel:hover {
   background-color: #f5f5f5;
 }
+
+/* Adicione este estilo no final do arquivo */
+.fab-bottom-right {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+}
