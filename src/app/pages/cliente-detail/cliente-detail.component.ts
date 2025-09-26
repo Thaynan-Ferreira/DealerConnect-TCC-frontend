@@ -1,7 +1,5 @@
-// src/app/pages/cliente-detail/cliente-detail.component.ts
-
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location} from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router'; // Importa ferramentas de roteamento
 import { Cliente, ClienteService } from '../../services/cliente.service';
 import { Observable } from 'rxjs';
@@ -33,7 +31,8 @@ export class ClienteDetailComponent implements OnInit {
   // Injetamos o ActivatedRoute para ler parâmetros da URL e o ClienteService para buscar dados
   constructor(
     private route: ActivatedRoute,
-    private clienteService: ClienteService
+    private clienteService: ClienteService,
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -48,6 +47,11 @@ export class ClienteDetailComponent implements OnInit {
         return this.clienteService.getClienteById(id);
       })
     );
+  }
+
+  // Esta função simplesmente diz ao serviço Location para "voltar uma página" no histórico.
+  goBack(): void {
+    this.location.back();
   }
 
   // Esta função será usada para pegar a cor do chip, igual na outra tela

@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
+import { LayoutComponent } from './core/layout/layout.component';
 
 import { ClienteListComponent } from './components/cliente-list/cliente-list.component';
 
@@ -10,7 +11,8 @@ import { ClienteListComponent } from './components/cliente-list/cliente-list.com
   imports: [
     CommonModule,
     RouterOutlet,
-    ClienteListComponent
+    ClienteListComponent,
+    LayoutComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']

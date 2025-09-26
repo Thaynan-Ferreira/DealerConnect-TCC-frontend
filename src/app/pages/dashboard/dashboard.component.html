@@ -1,0 +1,55 @@
+<div class="dashboard-container" *ngIf="stats">
+  <h1>Dashboard Gerencial</h1>
+
+  <div class="cards-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>people</mat-icon>
+        <mat-card-title>{{ stats.total_clientes }}</mat-card-title>
+        <mat-card-subtitle>Clientes Ativos</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+    <mat-card>
+      <mat-card-header>
+        <mat-icon mat-card-avatar>person_search</mat-icon>
+        <mat-card-title>{{ stats.total_leads }}</mat-card-title>
+        <mat-card-subtitle>Leads (Não Clientes)</mat-card-subtitle>
+      </mat-card-header>
+    </mat-card>
+  </div>
+
+  <div class="charts-container">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Clientes por Situação de Atendimento</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ngx-charts-pie-chart
+          [results]="dadosGraficoSituacao"
+          [scheme]="esquemaDeCores"
+          [labels]="true"
+          [doughnut]="true">
+        </ngx-charts-pie-chart>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Clientes por Classificação de Potencial (ML)</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <ngx-charts-bar-vertical
+          [results]="dadosGraficoClassificacao"
+          [scheme]="esquemaDeCores"
+          [xAxis]="true"
+          [yAxis]="true"
+          [legend]="false"
+          [showXAxisLabel]="true"
+          xAxisLabel="Classificação"
+          [showYAxisLabel]="true"
+          yAxisLabel="Nº de Clientes">
+        </ngx-charts-bar-vertical>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

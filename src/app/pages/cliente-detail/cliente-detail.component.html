@@ -1,9 +1,9 @@
 <div *ngIf="cliente$ | async as cliente; else loading">
   
   <div class="header">
-    <a mat-icon-button routerLink="/" matTooltip="Voltar para a lista">
+    <button mat-icon-button (click)="goBack()" matTooltip="Voltar">
       <mat-icon>arrow_back</mat-icon>
-    </a>
+    </button>
   </div>
 
   <mat-card class="cliente-card">
